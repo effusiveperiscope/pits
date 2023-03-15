@@ -34,7 +34,7 @@ def main(args):
 
     n_gpus = torch.cuda.device_count()
     os.environ['MASTER_ADDR'] = 'localhost'
-    os.environ['MASTER_PORT'] = '80000'
+    os.environ['MASTER_PORT'] = '6007'
 
     hps = utils.get_hparams(args)
     # create spectrogram files
@@ -60,7 +60,7 @@ def run(rank, n_gpus, hps, args):
         utils.check_git_hash(hps.model_dir)
         writer = SummaryWriter(log_dir=hps.model_dir)
 
-    dist.init_process_group(backend='nccl',
+    dist.init_process_group(backend='gloo' if os.name == 'nt' else 'nccl',
                             init_method='env://',
                             world_size=n_gpus,
                             rank=rank,
@@ -79,7 +79,7 @@ def run(rank, n_gpus, hps, args):
                                               and args.initial_run)
         eval_loader = DataLoader(
             eval_dataset,
-            num_workers=10,
+            num_workers=1, # ??
             shuffle=False,
             batch_size=hps.train.batch_size,
             pin_memory=use_pin_memory,

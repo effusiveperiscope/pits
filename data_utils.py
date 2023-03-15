@@ -116,6 +116,7 @@ class TextAudioSpeakerLoader(torch.utils.data.Dataset):
         return spec, ying, audio_norm
 
     def get_text(self, text):
+        #print(text)
         text_norm, tone = text_to_sequence(text, self.lang)
         if self.add_blank:
             text_norm = commons.intersperse(text_norm, 0)

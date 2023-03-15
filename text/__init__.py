@@ -32,7 +32,12 @@ def text_to_sequence(raw_text, lang):
 
             if m is not None:
                 ar = m.group(1)
-                sequence += [_symbol_to_id[symbol] for symbol in ar]
+                try:
+                    sequence += [_symbol_to_id[symbol] for symbol in ar]
+                except KeyError as e:
+                    print(e)
+                    print(m)
+                    raise e
                 ar = m.group(2)
                 sequence += [_symbol_to_id[symbol] for symbol in ar.split()]
                 text = m.group(3)
